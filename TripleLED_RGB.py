@@ -27,19 +27,10 @@ class TripleLED_RGB(object):
                 else:
                         GPIO.output(diodePin, GPIO.LOW)
  
-        def ToggleRed(self, turnOn):
-                self.ToggleDiode(self._TripleLED_RGB__diodePinRed, turnOn)
- 
-        def ToggleBlue(self, turnOn):
-                self.ToggleDiode(self._TripleLED_RGB__diodePinBlue, turnOn)
- 
-        def ToggleGreen(self, turnOn):
-                self.ToggleDiode(self._TripleLED_RGB__diodePinGreen, turnOn)
- 
         def ToggleLED(self, redOn, blueOn, greenOn):
-                self.ToggleRed(redOn)
-                self.ToggleBlue(blueOn)
-                self.ToggleGreen(greenOn)
+                self.ToggleDiode(self._TripleLED_RGB__diodePinRed, redOn)
+                self.ToggleDiode(self._TripleLED_RGB__diodePinBlue, blueOn)
+                self.ToggleDiode(self._TripleLED_RGB__diodePinGreen, greenOn)
  
         #Set Color by Number
         def SetColor(self, colorNumber):
@@ -101,10 +92,9 @@ class TripleLED_RGB(object):
         #Cycle Through All of the Colors
         #The timespan represents the time to wait until switching to the next color
         def Cycle(self, timespan):
-                self.TurnOff() #Might change this to just set the current color to 0.
+                self.currentColor = 0
                 count = 0
                 while(count < 7):
-                        count = count + 1
-                        time.sleep(timespan)
                         self.NextColor()
-                self.TurnOff() #Might take this out
+                        time.sleep(timespan)
+                        count = count + 1
