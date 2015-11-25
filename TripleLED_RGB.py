@@ -11,6 +11,7 @@ class TripleLED_RGB(object):
         __diodePinGreen = 0
  
         currentColor = 0
+        __colors = {'Off':0, 0:'Off', 'Green':1, 1:'Green', 'Blue':2, 2:'Blue', 'Aqua':3, 3:'Aqua', 'Red':4, 4:'Red', 'Yellow':5, 5:'Yellow', 'Purple':6, 6:'Purple', 'White':7, 7:'White'}
  
         #Initialize the GPIO outputs
         def __init__(self, redPin, bluePin, greenPin):
@@ -44,6 +45,18 @@ class TripleLED_RGB(object):
                 bit1 = (self.currentColor & 2) >> 1
                 bit2 = (self.currentColor & 4) >> 2
                 self.ToggleLED(bit2, bit1, bit0)
+ 
+        #Set Color by String
+        def TurnColor(self, colorName):
+                print "Color name retrieved: " + repr(self._TripleLED_RGB__colors[colorName])
+                colorNumber = self._TripleLED_RGB__colors[colorName]
+                if (colorNumber < 0 | colorNumber > 7):
+                        colorNumber = 0
+                self.SetColor(colorNumber)
+ 
+        #Return a string representation of the current color.
+        def PrintColor(self):
+                return self._TripleLED_RGB__colors[self.currentColor]
  
         #Change to the next color
         def NextColor(self):
