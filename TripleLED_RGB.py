@@ -10,6 +10,8 @@ class TripleLED_RGB(object):
         __diodePinBlue = 0
         __diodePinGreen = 0
  
+        currentColor = 0
+ 
         #Initialize the GPIO outputs
         def __init__(self, redPin, bluePin, greenPin):
                 self._TripleLED_RGB__diodePinRed = redPin
@@ -19,7 +21,6 @@ class TripleLED_RGB(object):
                 GPIO.setup(self._TripleLED_RGB__diodePinBlue, GPIO.OUT)
                 GPIO.setup(self._TripleLED_RGB__diodePinGreen, GPIO.OUT)
  
-        #Toggle A Diode
         def ToggleDiode(self, diodePin, turnOn):
                 if turnOn:
                         GPIO.output(diodePin, GPIO.HIGH)
@@ -40,53 +41,70 @@ class TripleLED_RGB(object):
                 self.ToggleBlue(blueOn)
                 self.ToggleGreen(greenOn)
  
-        #Turn the LED Red
-        def TurnRed(self):
-                self.ToggleLED(1,0,0)
+        #Set Color by Number
+        def SetColor(self, colorNumber):
+                if (colorNumber >= 0 & colorNumber <= 7):
+                        self.currentColor = colorNumber
+                elif (colorNumber > 7):
+                        self.currentColor = 0
+                elif (colorNumber < 0):
+                        self.currentColor = 7
+                bit0 = (self.currentColor & 1)
+                bit1 = (self.currentColor & 2) >> 1
+                bit2 = (self.currentColor & 4) >> 2
+                self.ToggleLED(bit2, bit1, bit0)
  
-        #Turn the LED Blue
-        def TurnBlue(self):
-                self.ToggleLED(0,1,0)
-       
-        #Turn the LED Green
-        def TurnGreen(self):
-                self.ToggleLED(0,0,1)
+        #Change to the next color
+        def NextColor(self):
+                if (self.currentColor == 7):
+                        self.currentColor = 0
+                self.SetColor(self.currentColor + 1)
  
-        #Turn the LED Purple
-        def TurnPurple(self):
-                self.ToggleLED(1,1,0)
- 
-        #Turn the LED Yellow
-        def TurnYellow(self):
-                self.ToggleLED(1,0,1)
- 
-        #Turn the LED Aqua
-        def TurnAqua(self):
-                self.ToggleLED(0,1,1)
- 
-        #Turn the LED White
-        def TurnWhite(self):
-                self.ToggleLED(1,1,1)
+        #Change to the previous color
+        def PreviousColor(self):
+                if (self.currentColor == 1):
+                        self.currentColor = 8
+                self.SetColor(self.currentColor - 1)
  
         #Turn the LED Off
         def TurnOff(self):
-                self.ToggleLED(0,0,0)
+                self.SetColor(0)
+ 
+        #Turn the LED Green
+        def TurnGreen(self):
+                self.SetColor(1)
+ 
+        #Turn the LED Blue
+        def TurnBlue(self):
+                self.SetColor(2)
+ 
+        #Turn the LED Aqua
+        def TurnAqua(self):
+                self.SetColor(3)
+ 
+        #Turn the LED Red
+        def TurnRed(self):
+                self.SetColor(4)
+ 
+        #Turn the LED Yellow
+        def TurnYellow(self):
+                self.SetColor(5)
+ 
+        #Turn the LED Purple
+        def TurnPurple(self):
+                self.SetColor(6)
+ 
+        #Turn the LED White
+        def TurnWhite(self):
+                self.SetColor(7)
  
         #Cycle Through All of the Colors
         #The timespan represents the time to wait until switching to the next color
         def Cycle(self, timespan):
-                self.TurnRed()
-                time.sleep(timespan)
-                self.TurnBlue()
-                time.sleep(timespan)
-                self.TurnGreen()
-                time.sleep(timespan)
-                self.TurnAqua()
-                time.sleep(timespan)
-                self.TurnPurple()
-                time.sleep(timespan)
-                self.TurnYellow()
-                time.sleep(timespan)
-                self.TurnWhite()
-                time.sleep(timespan)
-                self.TurnOff()
+                self.TurnOff() #Might change this to just set the current color to 0.
+                count = 0
+                while(count < 7):
+                        count = count + 1
+                        time.sleep(timespan)
+                        self.NextColor()
+                self.TurnOff() #Might take this out
